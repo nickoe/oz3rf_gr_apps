@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+
+  gnuradio:
+    image: satnogs_satation_37
+    build:
+      context: .
+      target: fisk
+    command: gnuradio-companion
+    ipc: host
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix
+      - ./workspace:/home/developer/workspace
+    environment:
+      - DISPLAY=unix$DISPLAY
+    ports:
+      - 5555:5555
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+
