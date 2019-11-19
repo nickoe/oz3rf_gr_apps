@@ -1,11 +1,11 @@
-FROM ubuntu:18.04 AS base
+FROM ubuntu:19.10 AS base
 RUN apt update && apt install -y gnuradio
 RUN apt install -y rtl-sdr gr-osmosdr libusb-1.0-0-dev git
 RUN apt install -y cmake
 RUN apt install -y swig python-pip
 
 
-FROM base AS fisk
+FROM base AS gnuradio
 
 
 WORKDIR /home/developer
@@ -28,10 +28,29 @@ RUN make -j$(nproc)
 RUN make install
 RUN ldconfig
 RUN cd .. && ./compile_hierarchical.sh
+RUN mkdir /home/developer/workspace
+
+
+FROM gnuradio AS satnogs_client
+RUN apt-get install -y libvorbis-dev
+WORKDIR /home/developer
+RUN git clone https://gitlab.com/librespacefoundation/satnogs/gr-satnogs.git
+RUN cd gr-satnogs && mkdir build
+WORKDIR /home/developer/gr-satnogs/build
+RUN apt-get install -y libpng-dev libpng++-dev zlib1g-dev pkg-config
+RUN cmake ..
+RUN make -j$(nproc)
+RUN make install
+RUN ldconfig
 
 
 WORKDIR /home/developer
-RUN mkdir /home/developer/workspace
+RUN git clone https://gitlab.com/librespacefoundation/satnogs/satnogs-client.git
+RUN pip install -e satnogs-client
+
+
+FROM gnuradio as grc
+WORKDIR /home/developer/workspace
 CMD gnuradio-companion
 EXPOSE 5555
 

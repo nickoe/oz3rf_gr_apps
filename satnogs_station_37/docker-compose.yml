@@ -6,14 +6,25 @@ services:
     image: satnogs_satation_37
     build:
       context: .
-      target: fisk
-    command: gnuradio-companion
+      target: satnogs_client
+      #command: gnuradio-companion
+    command: satnogs-client
     ipc: host
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix
       - ./workspace:/home/developer/workspace
     environment:
       - DISPLAY=unix$DISPLAY
+      - SATNOGS_API_TOKEN=${SATNOGS_API_TOKEN}
+      - SATNOGS_STATION_ID=${SATNOGS_STATION_ID}
+      - SATNOGS_STATION_LAT=${SATNOGS_STATION_LAT}
+      - SATNOGS_STATION_LON=${SATNOGS_STATION_LON}
+      - SATNOGS_STATION_ELEV=${SATNOGS_STATION_ELEV}
+      - SATNOGS_NETWORK_API_URL=${SATNOGS_NETWORK_API_URL}
+      - SATNOGS_RX_DEVICE=${SATNOGS_RX_DEVICE}
+      - SATNOGS_RF_GAIN=${SATNOGS_RF_GAIN}
+      - SATNOGS_IF_GAIN=${SATNOGS_IF_GAIN}
+      - SATNOGS_BB_GAIN=${SATNOGS_BB_GAIN}
     ports:
       - 5555:5555
     devices:
