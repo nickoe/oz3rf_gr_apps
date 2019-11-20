@@ -34,7 +34,8 @@ RUN cd .. && ./compile_hierarchical.sh
 FROM gnuradio AS satnogs_client
 RUN apt-get install -y libvorbis-dev
 WORKDIR /home/developer
-RUN git clone https://gitlab.com/librespacefoundation/satnogs/gr-satnogs.git
+#RUN git clone https://gitlab.com/librespacefoundation/satnogs/gr-satnogs.git
+RUN git clone -b rigctl_ip https://github.com/nickoe/gr-satnogs.git
 RUN cd gr-satnogs && mkdir build
 WORKDIR /home/developer/gr-satnogs/build
 RUN apt-get install -y libpng-dev libpng++-dev zlib1g-dev pkg-config
