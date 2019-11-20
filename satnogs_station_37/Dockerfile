@@ -4,6 +4,7 @@ RUN apt update && apt install -y gnuradio
 RUN apt install -y rtl-sdr gr-osmosdr libusb-1.0-0-dev git
 RUN apt install -y cmake
 RUN apt install -y swig python-pip
+RUN apt install -y xterm
 
 
 FROM base AS gnuradio
@@ -44,6 +45,8 @@ RUN ldconfig
 WORKDIR /home/developer
 RUN git clone https://gitlab.com/librespacefoundation/satnogs/satnogs-client.git
 RUN pip install -e satnogs-client
+
+RUN apt install -y libhamlib-utils libhamlib-dev
 
 
 FROM gnuradio as grc
