@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
 
-  gnuradio:
+  satnogs-client:
     image: satnogs_satation_37
     build:
       context: .
@@ -31,7 +31,7 @@ services:
       testing_net:
         ipv4_address: 172.28.1.1
 
-  grc:
+  gnuradio-companion:
     image: satnogs_satation_37
     build:
       context: .
