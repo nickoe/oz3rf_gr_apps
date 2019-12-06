@@ -10,7 +10,7 @@ services:
     command: satnogs-client
     ipc: host
     volumes:
-      - ./workspace:/home/developer/workspace
+      - ../workspace:/home/developer/workspace
     environment:
       - DISPLAY=unix$DISPLAY
       - SATNOGS_API_TOKEN=${SATNOGS_API_TOKEN}
@@ -19,7 +19,9 @@ services:
       - SATNOGS_STATION_LON=${SATNOGS_STATION_LON}
       - SATNOGS_STATION_ELEV=${SATNOGS_STATION_ELEV}
       - SATNOGS_NETWORK_API_URL=${SATNOGS_NETWORK_API_URL}
+      - SATNOGS_LOG_LEVEL=${SATNOGS_LOG_LEVEL}
       - SATNOGS_RX_DEVICE=${SATNOGS_RX_DEVICE}
+      - SATNOGS_PPM_ERROR=${SATNOGS_PPM_ERROR}
       - SATNOGS_RF_GAIN=${SATNOGS_RF_GAIN}
       - SATNOGS_IF_GAIN=${SATNOGS_IF_GAIN}
       - SATNOGS_BB_GAIN=${SATNOGS_BB_GAIN}
@@ -40,7 +42,7 @@ services:
     ipc: host
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix
-      - ./workspace:/home/developer/workspace
+      - ../workspace:/home/developer/workspace
     environment:
       - DISPLAY=unix$DISPLAY
       - SATNOGS_API_TOKEN=${SATNOGS_API_TOKEN}

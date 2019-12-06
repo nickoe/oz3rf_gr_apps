@@ -31,24 +31,61 @@ RUN make install
 RUN ldconfig
 RUN cd .. && ./compile_hierarchical.sh
 
+# gr-aausat DEPRICATED
+WORKDIR /home/developer
+RUN git clone https://github.com/daniestevez/gr-aausat.git
+RUN cd gr-aausat && mkdir build
+WORKDIR /home/developer/gr-aausat/build
+RUN cmake ../
+RUN make -j$(nproc)
+RUN make install
+RUN ldconfig
+
 
 FROM gnuradio AS satnogs_client
+RUN echo 3
 WORKDIR /home/developer
 #RUN git clone https://gitlab.com/librespacefoundation/satnogs/gr-satnogs.git
 RUN git clone -b rigctl_ip https://github.com/nickoe/gr-satnogs.git
 RUN cd gr-satnogs && mkdir build
 WORKDIR /home/developer/gr-satnogs/build
-RUN cmake ..
-RUN make -j$(nproc)
-RUN make install
-RUN ldconfig
+RUN cmake .. && make -j$(nproc) && make install && ldconfig
+
 WORKDIR /home/developer
 #RUN git clone https://gitlab.com/librespacefoundation/satnogs/satnogs-client.git
 RUN git clone -b aausat4_hacks https://gitlab.com/nickoe/satnogs-client.git
 RUN pip install -e satnogs-client
 
+RUN git clone -b refactor_2 https://github.com/nickoe/aausat4_beacon_parser.git
+RUN cd aausat4_beacon_parser/gr-aausat4 && mkdir build && mkdir lib
+WORKDIR /home/developer/aausat4_beacon_parser/gr-aausat4/build
+RUN cmake ..
+RUN make -j$(nproc)
+RUN make install
+RUN ldconfig
+RUN pip install config --user
+RUN pip install tracker --user
+WORKDIR /home/developer
+RUN pip install pyusb --user
+RUN git clone https://github.com/satlab/bbctl.git && \
+    cd bbctl && \
+    pip install -e . --user
+RUN pip install pypredict --user
+
+
+#gr-satnogs new-arch
+RUN git clone -b new-arch https://gitlab.com/surligas/gr-satnogs.git gr-satnogs_new-arch
+RUN cd gr-satnogs_new-arch && mkdir build
+WORKDIR /home/developer/gr-satnogs_new-arch/build
+RUN apt update && apt-get install -y libjsoncpp-dev
+#RUN cmake .. && make -j$(nproc) && make install && ldconfig
+
+ENV PYTHONPATH="/home/developer/aausat4_beacon_parser:${PYTHONPATH}"
+ENV PATH="/home/developer/workspace/bin:$PATH"
+
 WORKDIR /home/developer/workspace
 RUN mkdir -p tmp
+RUN pip install aenum --user
 
 FROM gnuradio as grc
 WORKDIR /home/developer/workspace
