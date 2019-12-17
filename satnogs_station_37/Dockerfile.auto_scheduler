@@ -28,7 +28,10 @@ RUN echo "'Celestrak (SatNOGS)','https://www.celestrak.com/NORAD/elements/satnog
 ENV PATH="/home/developer/workspace/bin:$PATH"
 ENV PATH="/home/developer/workspace/satnogs-auto-scheduler:$PATH"
 ENV NETWORK_API_TOKEN "empty"
-CMD ./schedule_single_station.py  -s 620 -T -n
 
+RUN schedule_single_station.py  -s 539 -T -n || true
+RUN cat /tmp/cache/transmitters_539.txt | grep 41460 | grep 2k4 > priority.txt
+RUN awk '{if ($3>=80) print $0 }' priority.txt | grep -e "MSK" | awk '{printf("%s 1.0 %s\n",$1,$2)}' > priority.txt
+CMD schedule_single_station.py  -s 539 -T -P priority.txt -d 1.2 -f
 #docker build -t auto-scheduler_test -f Dockerfile.auto_scheduler .
 #docker run -it --entrypoint bash -e NETWORK_API_TOKEN=${SATNOGS_API_TOKEN}  auto-scheduler_test
