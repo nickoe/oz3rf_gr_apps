@@ -19,8 +19,8 @@ RUN git config --global user.email "you@example.com"
 RUN git config --global user.name "Your Name"
 
 WORKDIR /home/developer/workspace/satnogs-auto-scheduler
-RUN git fetch origin 7aaf9c1341ee8f18918516a304902dbcf1abd048
-RUN git cherry-pick 7aaf9c1341ee8f18918516a304902dbcf1abd048
+RUN git fetch origin a4accc99296d8890fa0f3bbc67e4cf8960246b48
+RUN git cherry-pick a4accc99296d8890fa0f3bbc67e4cf8960246b48
 
 # Workaround some issue with nasabare
 RUN echo "'Celestrak (SatNOGS)','https://www.celestrak.com/NORAD/elements/satnogs.txt'" > /home/developer/workspace/python-satellitetle/satellite_tle/sources.csv
