@@ -19,8 +19,6 @@ RUN git config --global user.email "you@example.com"
 RUN git config --global user.name "Your Name"
 
 WORKDIR /home/developer/workspace/satnogs-auto-scheduler
-RUN git fetch origin a4accc99296d8890fa0f3bbc67e4cf8960246b48
-RUN git cherry-pick a4accc99296d8890fa0f3bbc67e4cf8960246b48
 
 # Workaround some issue with nasabare
 RUN echo "'Celestrak (SatNOGS)','https://www.celestrak.com/NORAD/elements/satnogs.txt'" > /home/developer/workspace/python-satellitetle/satellite_tle/sources.csv
@@ -29,9 +27,10 @@ ENV PATH="/home/developer/workspace/bin:$PATH"
 ENV PATH="/home/developer/workspace/satnogs-auto-scheduler:$PATH"
 ENV NETWORK_API_TOKEN "empty"
 
-RUN schedule_single_station.py  -s 539 -T -n || true
-RUN cat /tmp/cache/transmitters_539.txt | grep 41460 | grep 2k4 > priority.txt
-RUN awk '{if ($3>=80) print $0 }' priority.txt | grep -e "MSK" | awk '{printf("%s 1.0 %s\n",$1,$2)}' > priority.txt
-CMD schedule_single_station.py  -s 539 -T -P priority.txt -d 1.2 -f
+RUN schedule_single_station.py  -s 539 -T -n -d 24 || true
+RUN cat /tmp/cache/transmitters_539.txt | grep 41460 | grep 2k4 > transmitters.txt
+RUN awk '{if ($3>=80) print $0 }' transmitters.txt | grep -e "MSK" | awk '{printf("%s 1.0 %s\n",$1,$2)}' > priority.txt
+#CMD schedule_single_station.py  -s 539 -T -P priority.txt -d 1.2 -f
+CMD schedule_single_station.py  -s 539 -T -P priority.txt -d 24 -f
 #docker build -t auto-scheduler_test -f Dockerfile.auto_scheduler .
-#docker run -it --entrypoint bash -e NETWORK_API_TOKEN=${SATNOGS_API_TOKEN}  auto-scheduler_test
+#docker run -it --entrypoint bash -e SATNOGS_API_TOKEN=${SATNOGS_API_TOKEN}  auto-scheduler_test
