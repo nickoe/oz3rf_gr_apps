@@ -13,11 +13,6 @@ RUN git clone https://gitlab.com/librespacefoundation/satnogs/satnogs-auto-sched
 #RUN pip install -e satnogs-auto-scheduler
 RUN pip install -r satnogs-auto-scheduler/requirements.txt
 
-
-# Hack to get API access token to work
-RUN git config --global user.email "you@example.com"
-RUN git config --global user.name "Your Name"
-
 WORKDIR /home/developer/workspace/satnogs-auto-scheduler
 
 # Workaround some issue with nasabare
@@ -28,9 +23,9 @@ ENV PATH="/home/developer/workspace/satnogs-auto-scheduler:$PATH"
 ENV NETWORK_API_TOKEN "empty"
 
 RUN schedule_single_station.py  -s 539 -T -n -d 24 || true
-RUN cat /tmp/cache/transmitters_539.txt | grep 41460 | grep 2k4 > transmitters.txt
-RUN awk '{if ($3>=80) print $0 }' transmitters.txt | grep -e "MSK" | awk '{printf("%s 1.0 %s\n",$1,$2)}' > priority.txt
-#CMD schedule_single_station.py  -s 539 -T -P priority.txt -d 1.2 -f
+RUN grep -e "41460" /tmp/cache/transmitters_539.txt  | grep -e "GMSK2k4" > transmitters.txt
+RUN cat transmitters.txt | awk '{printf("%s 1.0 %s\n",$1,$2)}' > priority.txt
+
 CMD schedule_single_station.py  -s 539 -T -P priority.txt -d 24 -f
 #docker build -t auto-scheduler_test -f Dockerfile.auto_scheduler .
 #docker run -it --entrypoint bash -e SATNOGS_API_TOKEN=${SATNOGS_API_TOKEN}  auto-scheduler_test
