@@ -12,7 +12,6 @@ services:
     volumes:
       - ../workspace:/home/developer/workspace
     environment:
-      - DISPLAY=unix$DISPLAY
       - SATNOGS_API_TOKEN=${SATNOGS_API_TOKEN}
       - SATNOGS_STATION_ID=${SATNOGS_STATION_ID}
       - SATNOGS_STATION_LAT=${SATNOGS_STATION_LAT}

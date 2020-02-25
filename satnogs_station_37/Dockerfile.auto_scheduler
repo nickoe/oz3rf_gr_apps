@@ -26,6 +26,6 @@ RUN schedule_single_station.py  -s 539 -T -n -d 24 || true
 RUN grep -e "41460" /tmp/cache/transmitters_539.txt  | grep -e "GMSK2k4" > transmitters.txt
 RUN cat transmitters.txt | awk '{printf("%s 1.0 %s\n",$1,$2)}' > priority.txt
 
-CMD schedule_single_station.py  -s 539 -T -P priority.txt -d 24 -f
+CMD schedule_single_station.py  -s 539 -T -P priority.txt -d 1.2 -f
 #docker build -t auto-scheduler_test -f Dockerfile.auto_scheduler .
 #docker run -it --entrypoint bash -e SATNOGS_API_TOKEN=${SATNOGS_API_TOKEN}  auto-scheduler_test
