@@ -21,6 +21,10 @@ python3-zmq python3-scipy
 RUN apt-get install -y \
 libsoapysdr-dev
 
+# needed for grc of gnuradio
+RUN apt-get install -y python3-gi-cairo
+
+
 FROM base AS gnuradio
 WORKDIR /home/developer
 RUN mkdir /home/developer/workspace
