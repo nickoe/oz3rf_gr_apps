@@ -44,7 +44,7 @@ ENV PREFIX=$LOCALPREFIX
 #RUN source gnuradio.env
 RUN ./install_oot_helper.sh https://github.com/gnuradio/gnuradio.git maint-3.8
 RUN ./install_oot_helper.sh https://github.com/daniestevez/gr-satellites.git maint-3.8
-RUN cd gr-satellites && ./compile_hierarchical.sh
+RUN cd gr-satellites && bash -c "source ../gnuradio.env && ./compile_hierarchical.sh"
 RUN pwd
 RUN ./install_oot_helper.sh https://gitlab.com/librespacefoundation/satnogs/gr-soapy.git
 
