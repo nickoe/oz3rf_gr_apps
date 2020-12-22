@@ -10,8 +10,7 @@ RUN git clone https://gitlab.com/librespacefoundation/python-satellitetle.git
 RUN pip install -e python-satellitetle
 
 RUN git clone https://gitlab.com/librespacefoundation/satnogs/satnogs-auto-scheduler.git
-#RUN pip install -e satnogs-auto-scheduler
-RUN pip install -r satnogs-auto-scheduler/requirements.txt
+RUN pip install -e satnogs-auto-scheduler
 
 WORKDIR /home/developer/workspace/satnogs-auto-scheduler
 
@@ -22,10 +21,13 @@ ENV PATH="/home/developer/workspace/bin:$PATH"
 ENV PATH="/home/developer/workspace/satnogs-auto-scheduler:$PATH"
 ENV NETWORK_API_TOKEN "empty"
 
-RUN schedule_single_station.py  -s 539 -T -n -d 24 || true
-RUN grep -e "41460" /tmp/cache/transmitters_539.txt  | grep -e "GMSK2k4" > transmitters.txt
-RUN cat transmitters.txt | awk '{printf("%s 1.0 %s\n",$1,$2)}' > priority.txt
+#RUN schedule_single_station.py  -s 539 -T -n -d 24 || true
+#RUN grep -e "41460 " /tmp/cache/transmitters_539.txt  | grep -e "GMSK2k4" > transmitters.txt
+#RUN cat transmitters.txt | awk '{printf("%s 1.0 %s\n",$1,$2)}' > priority.txt
+RUN echo "41460 1.0 JLNq6FzBfaCvK7H5neMKiC" > priority.txt
 
-CMD schedule_single_station.py  -s 539 -T -P priority.txt -d 1.2 -f
+COPY my_scheduler_script.sh .
+CMD ./my_scheduler_script.sh
+#CMD schedule_single_station.py  -s 539 -T -P priority.txt -d 1.2 -f
 #docker build -t auto-scheduler_test -f Dockerfile.auto_scheduler .
 #docker run -it --entrypoint bash -e SATNOGS_API_TOKEN=${SATNOGS_API_TOKEN}  auto-scheduler_test
