@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -xe
 
 source gnuradio.env
 if [ -z ${PREFIX+x} ] ; then
@@ -26,7 +26,7 @@ git clone --recursive ${BRANCH_STRING} ${REPO}
 mkdir -p $REPO_DIR/build
 pushd $REPO_DIR/build
 cmake -DCMAKE_INSTALL_PREFIX=${PREFIX} -DPYTHON_EXECUTABLE=$(which python3) ..
-make -j8 install
+make -j38 install
 popd
 
 
