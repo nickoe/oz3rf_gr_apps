@@ -1,0 +1,104 @@
+version: '3.7'
+
+services:
+
+  satnogs-client:
+    image: satnogs_dev_38
+    build:
+      context: .
+      target: satnogs_client
+    command: bash -c "source ../gnuradio.env && satnogs-client"
+    ipc: host
+    volumes:
+      - ../workspace:/home/developer/workspace
+    environment:
+      - SATNOGS_API_TOKEN=${SATNOGS_API_TOKEN}
+      - SATNOGS_STATION_ID=${SATNOGS_STATION_ID}
+      - SATNOGS_STATION_LAT=${SATNOGS_STATION_LAT}
+      - SATNOGS_STATION_LON=${SATNOGS_STATION_LON}
+      - SATNOGS_STATION_ELEV=${SATNOGS_STATION_ELEV}
+      - SATNOGS_NETWORK_API_URL=${SATNOGS_NETWORK_API_URL}
+      - SATNOGS_LOG_LEVEL=${SATNOGS_LOG_LEVEL}
+      - SATNOGS_RX_DEVICE=${SATNOGS_RX_DEVICE}
+      - SATNOGS_PPM_ERROR=${SATNOGS_PPM_ERROR}
+      - SATNOGS_RF_GAIN=${SATNOGS_RF_GAIN}
+      - SATNOGS_IF_GAIN=${SATNOGS_IF_GAIN}
+      - SATNOGS_BB_GAIN=${SATNOGS_BB_GAIN}
+      - SATNOGS_ROT_IP=172.31.1.3
+      - SATNOGS_RIG_IP=172.31.1.2
+      - SATNOGS_SOAPY_RX_DEVICE=airspy
+      - SATNOGS_RX_SAMP_RATE=2.5e6
+      - SATNOGS_ANTENNA=RX
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    networks:
+      testing_net:
+        ipv4_address: 172.31.1.1
+
+  gnuradio-companion:
+    image: satnogs_dev_38
+    build:
+      context: .
+      target: grc
+    command: bash -c "source ../gnuradio.env && gnuradio-companion"
+    ipc: host
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix
+      - ../workspace:/home/developer/workspace
+    environment:
+      - DISPLAY=unix$DISPLAY
+      - SATNOGS_API_TOKEN=${SATNOGS_API_TOKEN}
+      - SATNOGS_STATION_ID=${SATNOGS_STATION_ID}
+      - SATNOGS_STATION_LAT=${SATNOGS_STATION_LAT}
+      - SATNOGS_STATION_LON=${SATNOGS_STATION_LON}
+      - SATNOGS_STATION_ELEV=${SATNOGS_STATION_ELEV}
+      - SATNOGS_NETWORK_API_URL=${SATNOGS_NETWORK_API_URL}
+      - SATNOGS_RX_DEVICE=${SATNOGS_RX_DEVICE}
+      - SATNOGS_RF_GAIN=${SATNOGS_RF_GAIN}
+      - SATNOGS_IF_GAIN=${SATNOGS_IF_GAIN}
+      - SATNOGS_BB_GAIN=${SATNOGS_BB_GAIN}
+      - SATNOGS_ROT_IP=172.31.1.3
+      - SATNOGS_RIG_IP=172.31.1.2
+      - SATNOGS_SOAPY_RX_DEVICE=airspy
+      - SATNOGS_RX_SAMP_RATE=2.5e6
+      - SATNOGS_ANTENNA=RX
+    ports:
+      - 5555:5555
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    networks:
+      testing_net:
+        ipv4_address: 172.31.1.10
+
+  rotctl:
+    image: satnogs_dev_38
+    build:
+      context: .
+      target: satnogs_client
+    command: rotctld -m 1
+    ipc: host
+    ports:
+      - 4533:4533
+    networks:
+      testing_net:
+        ipv4_address: 172.31.1.3
+
+  rigctl:
+    image: satnogs_dev_38
+    build:
+      context: .
+      target: satnogs_client
+    command: rigctld -m 1
+    ipc: host
+    ports:
+      - 4532:4532
+    networks:
+      testing_net:
+        ipv4_address: 172.31.1.2
+
+networks:
+  testing_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.31.0.0/16
